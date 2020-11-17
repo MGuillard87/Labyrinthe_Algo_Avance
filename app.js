@@ -51,22 +51,27 @@ function new_labyrinthe(taille, ex) {
     }
     console.log(arrayLab)
 }
-
+function play() {
+    move()
+}
 /*==============CODE SE DEPLACANT DANS LE LABYRINTHE=================*/
-function move(dataLab) {
-    let posX = 3;
-    let posY = 0;
-    findMyPosition(posX, posY)
-    while (lastCase(dataLab, posX, posY)) {
+function move() {
+    let s = arrayLab[0];
+    let Sstack = [];// ici que l'on est passé
+    Sstack.push(s);//là par nous sommes passé va dans le stack
+    s["isVisited"] = true;//prouve que l'on est passé par là
+    visited(s);
+    console.log("ça c'est s : ", s)
 
-
-    }
 }
 function findMyPosition(X, Y) {
     let element = document.createElement("DIV");
     element.style.backgroundColor = "rgb(64,234,207)";
 }
-
+function visited(s) {
+    let idCase = "cellule" + s["x"] + "_" + s["y"];
+    document.getElementById(idCase).style.backgroundColor = "rgb(62,234,207)";
+}
 
 function lastCase(nbCote, X, Y) {
     let final = Math.sqrt(nbCote.length)
