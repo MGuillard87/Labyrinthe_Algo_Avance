@@ -27,7 +27,7 @@ function new_labyrinthe(taille, ex) {
     //haut droit bas gauche
     for (let i = 0; i < ex.length; i++) {
         let borderstyle = "";
-        arrayLab[i] = new Array(4);
+        arrayLab[i] = {};
         for (let j = 0; j < ex[i]["walls"].length; j++) {
 
             if (ex[i]["walls"][j]) {
@@ -58,10 +58,13 @@ function play() {
 function move() {
     let s = arrayLab[0];
     let Sstack = [];// ici que l'on est passé
+    console.log("avant", Sstack);
     Sstack.push(s);//là par nous sommes passé va dans le stack
     s["isVisited"] = true;//prouve que l'on est passé par là
     visited(s);
-    console.log("ça c'est s : ", s)
+    console.log("après", Sstack);
+    lookAroundYou(s);
+
 
 }
 function findMyPosition(X, Y) {
@@ -72,6 +75,35 @@ function visited(s) {
     let idCase = "cellule" + s["x"] + "_" + s["y"];
     document.getElementById(idCase).style.backgroundColor = "rgb(62,234,207)";
 }
+
+
+function lookAroundYou(position) {
+    /*ordre : bas droite haut gauche */
+    /*en reprenant notre position
+    * SI on regarde en haut alors position = position - 1 pos x
+    * SI on regarde à droite alors position = position + 1 pos y
+    * SI on regarde en bas alors position = position + 1 pos x
+    * SI on regarde à gauche alors position = position - 1 pos y
+    * */
+    let positionPossible = [];
+    for(let i = 0; i<position.walls.length; i++) {
+            if(!position.walls[i] && i === 0) {
+                positionPossible = positionPossible.push(position.posX - 1)
+            }
+            if(!position.walls[i] && i === 1) {
+                positionPossible = positionPossible.push(position.posY + 1)
+            }
+            if(!position.walls[i] && i === 2) {
+            positionPossible = positionPossible.push(position.posX + 1)
+            }
+            if(!position.walls[i] && i === 3) {
+                positionPossible = positionPossible.push(position.posY - 1)
+            }
+    }
+    console.log(positionPossible);
+
+}
+
 
 function lastCase(nbCote, X, Y) {
     let final = Math.sqrt(nbCote.length)
