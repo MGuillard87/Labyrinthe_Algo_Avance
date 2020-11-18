@@ -1,36 +1,33 @@
+
+let arrayLab;
+
 function randomOrNot() {
     let random = true;
     let content = document.getElementById('grid-container');
-    while(content.firstChild) {
+    while (content.firstChild) {
         content.removeChild(content.firstChild);
     }
     if (random) {
-        randomLab();
+        let randomCase = Math.floor(Math.random() * Object.keys(labyrinthes).length + 3);
+        let randomEx = Math.floor(Math.random() * 3);
+        new_labyrinthe(randomCase, labyrinthes[randomCase]["ex-" + randomEx]);
     }else {
-        chooseLab()
+        new_labyrinthe(5, labyrinthes["5"]["ex-0"]);
     }
 }
-/*===============CODE GENERANT LE LABYRINTHE=========================*/
-function randomLab() {
-    let randomCase = Math.floor(Math.random() * Object.keys(labyrinthes).length);
-    let randomEx = Math.floor(Math.random() * 3);
-    new_labyrinthe(randomCase, labyrinthes[randomCase]["ex-" + randomEx])
-}
 
-function chooseLab() {
-    new_labyrinthe(6, labyrinthes["6"]["ex-0"]);
-}
+/*===============CODE GENERANT LE LABYRINTHE=========================*/
 
 function new_labyrinthe(taille, ex) {
+    arrayLab = new Array(ex.length);
 
     document.getElementById("grid-container").style.gridTemplateColumns = "repeat(" + taille + ", 50px)";
     document.getElementById("grid-container").style.gridTemplateRows = "repeat(" + taille + ", 50px)";
 
-
-    //haut droit bas gauche 
+    //haut droit bas gauche
     for (let i = 0; i < ex.length; i++) {
         let borderstyle = "";
-
+        arrayLab[i] = {};
         for (let j = 0; j < ex[i]["walls"].length; j++) {
 
             if (ex[i]["walls"][j]) {
@@ -39,36 +36,89 @@ function new_labyrinthe(taille, ex) {
                 borderstyle = borderstyle + "none ";
             }
         }
+        arrayLab[i]["posX"] = ex[i]["posX"];
+        arrayLab[i]["posY"] = ex[i]["posY"];
+        arrayLab[i]["walls"] = ex[i]["walls"];
+        arrayLab[i]["isVisited"] = false;
 
-        console.log(borderstyle, "celule num " + ex[i]["posX"] +"_"+ ex[i]["posY"]);
         let element = document.createElement("DIV");
-        element.id = "cellule_"+ ex[i]["posX"] +"_"+ ex[i]["posY"];
-        if(i === ex.length-1){
-            element.style.backgroundColor = "tomato"}
+        element.id = "cellule"+ ex[i]["posX"] +"_"+ ex[i]["posY"];
+        if (i === ex.length-1) {
+            element.style.backgroundColor = "tomato" }
         element.style.borderStyle = borderstyle;
         element.style.borderColor = "rgb(210,10,122)";
         document.getElementById("grid-container").appendChild(element);
-
     }
-    move(3);
+    console.log(arrayLab)
 }
-
+function play() {
+    DFS(arrayLab, arrayLab[0]);
+}
 /*==============CODE SE DEPLACANT DANS LE LABYRINTHE=================*/
-function move(nbCote) {
-    let posX = 3;
-    let posY = 0;
-    let element = document.createElement("DIV");
-    element.style.backgroundColor = "rgb(64,234,207)"
-    while (lastCase(nbCote, posX, posY)) {
-        findMyPosition(posX, posY)
+function DFS(labyrinthe, caseDepart) {
+   let stack = [];
+   stack.push(caseDepart);
+   visited(caseDepart);
+   while (stack.length > 0) {
+       let v = stack.pop()
+       visited(v);
+       if (lastCase(v)) { return; }
+       let listesCasesVoisines = allVoisin(v, arrayLab);
+       for (let w = 0; w<listesCasesVoisines.length;w++) {
+           if (!listesCasesVoisines[w].isVisited) {
+               stack.push(listesCasesVoisines[w]);
 
+           }
+       }
+
+   }
+    return false;
+}
+
+function visited(s) {
+    s.isVisited = true;
+    let idCase = "cellule" + s["posX"] + "_" + s["posY"];
+    document.getElementById(idCase).style.backgroundColor = "rgb(62,234,207)";
+}
+
+function allVoisin(caseActuelle, tableauLabyrinthe) {
+
+    let result = [];
+    for (let i = 0; i<caseActuelle.walls.length; i++) {
+        if (!caseActuelle.walls[i]) {
+            switch (i) {
+                case 0 : result.push(getCaseByCoordinate(caseActuelle.posX-1, caseActuelle.posY));//haut
+                    break;
+                case 1 : result.push(getCaseByCoordinate(caseActuelle.posX, caseActuelle.posY+1));//droite
+
+                    break;
+                case 2 : result.push(getCaseByCoordinate(caseActuelle.posX+1, caseActuelle.posY));//bas
+                    break;
+                case 3 : result.push(getCaseByCoordinate(caseActuelle.posX, caseActuelle.posY-1));//gauche
+            }
+        }
     }
-}
-function findMyPosition(X, Y) {
-    document.getElementById("cellule_" + X +"_" + Y).id
+    return result;
 }
 
+function getCaseByCoordinate(x, y) {
+    for (let i = 0; i <arrayLab.length; i++) {
+        if (x === arrayLab[i].posX && y === arrayLab[i].posY) {
+            return arrayLab[i];
+        }
+    }
+    return null;
+}
 
-function lastCase(nbCote, X, Y) {
-    return (X === nbCote) && (Y === nbCote);
+function getCaseByIndex(i) {
+
+}
+
+function getIndexByCoordonate(x, y) {
+
+}
+
+function lastCase(currentCase) {
+   return arrayLab.indexOf(currentCase) === arrayLab.length -1
+
 }
