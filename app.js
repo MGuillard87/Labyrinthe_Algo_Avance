@@ -114,46 +114,9 @@ function getCaseByIndex(i) {
 
 }
 
-
-
 function getIndexByCoordonate(x, y) {
 
 }
-function lookAroundYou(position, stack) {
-    /*ordre : bas droite haut gauche */
-    /*en reprenant notre position
-    * SI on regarde en haut alors position = position - 1 pos x
-    * SI on regarde à droite alors position = position + 1 pos y
-    * SI on regarde en bas alors position = position + 1 pos x
-    * SI on regarde à gauche alors position = position - 1 pos y
-    * */
-    let index;
-    for(let i = 0; i<position[0].walls.length; i++) {
-        console.log("on est dans le for");
-            if(!position[0].walls[i]) {
-                debugger
-                /*position actuel via l'index = position*/
-                switch (i) {
-                    case 0 : stack.push(arrayLab[position[index] - 5]);//haut
-                    break;
-                    case 1 : stack.push(arrayLab[position[0] + 1]);//droite
-                    break;
-                    case 2 : stack.push(arrayLab[position[0] + 5]);//bas
-                    break;
-                    case 3 : stack.push(arrayLab[position[0] - 1]);//gauche
-                }
-            }
-            /*l'idée : on récupoère l'index de notre tableau du
-            * labyrinthe afon de savoir les infos de notre case actuel
-            * ENSUITE, suivant l'endroit où il ya les murs
-            * on applique la formule pour récupérer l'index et
-            * ainsi l'objet de façon à ce que cet objet soit
-            * pushé dans la stack*/
-    }
-    console.log(stack);
-
-}
-
 
 function lastCase(currentCase) {
    return arrayLab.indexOf(currentCase) === arrayLab.length -1
