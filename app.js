@@ -2,7 +2,7 @@
 let arrayLab;
 
 function randomOrNot() {
-    let random = false;
+    let random = true;
     let content = document.getElementById('grid-container');
     while (content.firstChild) {
         content.removeChild(content.firstChild);
@@ -36,8 +36,8 @@ function new_labyrinthe(taille, ex) {
                 borderstyle = borderstyle + "none ";
             }
         }
-        arrayLab[i]["x"] = ex[i]["posX"];
-        arrayLab[i]["y"] = ex[i]["posY"];
+        arrayLab[i]["posX"] = ex[i]["posX"];
+        arrayLab[i]["posY"] = ex[i]["posY"];
         arrayLab[i]["walls"] = ex[i]["walls"];
         arrayLab[i]["isVisited"] = false;
 
@@ -52,33 +52,73 @@ function new_labyrinthe(taille, ex) {
     console.log(arrayLab)
 }
 function play() {
-    move()
+    DFS(arrayLab, arrayLab[0]);
 }
 /*==============CODE SE DEPLACANT DANS LE LABYRINTHE=================*/
-function move() {
-    let s = arrayLab[0];
-    let stack = [];// possibilités de direction
-    console.log("avant", stack);
-    stack.push(s);//là par nous sommes passé va dans le stack
-    s["isVisited"] = true;//prouve que l'on est passé par là
-    visited(s);
-    console.log("après", stack);
-    lookAroundYou(s, stack);
-    debugger
-    visited(stack[1])
+function DFS(labyrinthe, caseDepart) {
+   let stack = [];
+   stack.push(caseDepart);
+   visited(caseDepart);
+   while (stack.length > 0) {
+       let v = stack.pop()
+       visited(v);
+       if (lastCase(v)) { return; }
+       let listesCasesVoisines = allVoisin(v, arrayLab);
+       for (let w = 0; w<listesCasesVoisines.length;w++) {
+           if (!listesCasesVoisines[w].isVisited) {
+               stack.push(listesCasesVoisines[w]);
 
+           }
+       }
 
+   }
+    return false;
 }
-function findMyPosition(X, Y) {
-    let element = document.createElement("DIV");
-    element.style.backgroundColor = "rgb(64,234,207)";
-}
+
 function visited(s) {
-    let idCase = "cellule" + s["x"] + "_" + s["y"];
+    s.isVisited = true;
+    let idCase = "cellule" + s["posX"] + "_" + s["posY"];
     document.getElementById(idCase).style.backgroundColor = "rgb(62,234,207)";
 }
 
+function allVoisin(caseActuelle, tableauLabyrinthe) {
 
+    let result = [];
+    for (let i = 0; i<caseActuelle.walls.length; i++) {
+        if (!caseActuelle.walls[i]) {
+            switch (i) {
+                case 0 : result.push(getCaseByCoordinate(caseActuelle.posX-1, caseActuelle.posY));//haut
+                    break;
+                case 1 : result.push(getCaseByCoordinate(caseActuelle.posX, caseActuelle.posY+1));//droite
+
+                    break;
+                case 2 : result.push(getCaseByCoordinate(caseActuelle.posX+1, caseActuelle.posY));//bas
+                    break;
+                case 3 : result.push(getCaseByCoordinate(caseActuelle.posX, caseActuelle.posY-1));//gauche
+            }
+        }
+    }
+    return result;
+}
+
+function getCaseByCoordinate(x, y) {
+    for (let i = 0; i <arrayLab.length; i++) {
+        if (x === arrayLab[i].posX && y === arrayLab[i].posY) {
+            return arrayLab[i];
+        }
+    }
+    return null;
+}
+
+function getCaseByIndex(i) {
+
+}
+
+
+
+function getIndexByCoordonate(x, y) {
+
+}
 function lookAroundYou(position, stack) {
     /*ordre : bas droite haut gauche */
     /*en reprenant notre position
@@ -87,18 +127,20 @@ function lookAroundYou(position, stack) {
     * SI on regarde en bas alors position = position + 1 pos x
     * SI on regarde à gauche alors position = position - 1 pos y
     * */
-    for(let i = 0; i<position.walls.length; i++) {
+    let index;
+    for(let i = 0; i<position[0].walls.length; i++) {
         console.log("on est dans le for");
-            if(!position.walls[i]) {
-                /*position actuel = position*/
+            if(!position[0].walls[i]) {
+                debugger
+                /*position actuel via l'index = position*/
                 switch (i) {
-                    case 0 : stack.push(position.x - 1);//haut
+                    case 0 : stack.push(arrayLab[position[index] - 5]);//haut
                     break;
-                    case 1 : stack.push(position.y + 1);//droite
+                    case 1 : stack.push(arrayLab[position[0] + 1]);//droite
                     break;
-                    case 2 : stack.push(arrayLab[position + 5]);//bas
+                    case 2 : stack.push(arrayLab[position[0] + 5]);//bas
                     break;
-                    case 3 : stack.push(position.y - 1);//gauche
+                    case 3 : stack.push(arrayLab[position[0] - 1]);//gauche
                 }
             }
             /*l'idée : on récupoère l'index de notre tableau du
@@ -113,7 +155,7 @@ function lookAroundYou(position, stack) {
 }
 
 
-function lastCase(nbCote, X, Y) {
-    let final = Math.sqrt(nbCote.length)
-    return (X === final) && (Y === final);
+function lastCase(currentCase) {
+   return arrayLab.indexOf(currentCase) === arrayLab.length -1
+
 }
