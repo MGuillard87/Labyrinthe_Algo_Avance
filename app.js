@@ -2,7 +2,7 @@
 let arrayLab;
 
 function randomOrNot() {
-    let random = true;
+    let random = false;
     let content = document.getElementById('grid-container');
     while (content.firstChild) {
         content.removeChild(content.firstChild);
@@ -12,7 +12,7 @@ function randomOrNot() {
         let randomEx = Math.floor(Math.random() * 3);
         new_labyrinthe(randomCase, labyrinthes[randomCase]["ex-" + randomEx]);
     }else {
-        new_labyrinthe(6, labyrinthes["6"]["ex-0"]);
+        new_labyrinthe(5, labyrinthes["5"]["ex-0"]);
     }
 }
 
@@ -57,13 +57,15 @@ function play() {
 /*==============CODE SE DEPLACANT DANS LE LABYRINTHE=================*/
 function move() {
     let s = arrayLab[0];
-    let Sstack = [];// ici que l'on est passé
-    console.log("avant", Sstack);
-    Sstack.push(s);//là par nous sommes passé va dans le stack
+    let stack = [];// possibilités de direction
+    console.log("avant", stack);
+    stack.push(s);//là par nous sommes passé va dans le stack
     s["isVisited"] = true;//prouve que l'on est passé par là
     visited(s);
-    console.log("après", Sstack);
-    lookAroundYou(s);
+    console.log("après", stack);
+    lookAroundYou(s, stack);
+    debugger
+    visited(stack[1])
 
 
 }
@@ -77,7 +79,7 @@ function visited(s) {
 }
 
 
-function lookAroundYou(position) {
+function lookAroundYou(position, stack) {
     /*ordre : bas droite haut gauche */
     /*en reprenant notre position
     * SI on regarde en haut alors position = position - 1 pos x
@@ -85,24 +87,28 @@ function lookAroundYou(position) {
     * SI on regarde en bas alors position = position + 1 pos x
     * SI on regarde à gauche alors position = position - 1 pos y
     * */
-    let positionPossible = [];
     for(let i = 0; i<position.walls.length; i++) {
         console.log("on est dans le for");
-        debugger
-            if(!position.walls[i] && i === 0) {
-                positionPossible = positionPossible.push(position.posX - 1)
+            if(!position.walls[i]) {
+                /*position actuel = position*/
+                switch (i) {
+                    case 0 : stack.push(position.x - 1);//haut
+                    break;
+                    case 1 : stack.push(position.y + 1);//droite
+                    break;
+                    case 2 : stack.push(arrayLab[position + 5]);//bas
+                    break;
+                    case 3 : stack.push(position.y - 1);//gauche
+                }
             }
-            if(!position.walls[i] && i === 1) {
-                positionPossible = positionPossible.push(position.posY + 1)
-            }
-            if(!position.walls[i] && i === 2) {
-            positionPossible = positionPossible.push(position.posX + 1)
-            }
-            if(!position.walls[i] && i === 3) {
-                positionPossible = positionPossible.push(position.posY - 1)
-            }
+            /*l'idée : on récupoère l'index de notre tableau du
+            * labyrinthe afon de savoir les infos de notre case actuel
+            * ENSUITE, suivant l'endroit où il ya les murs
+            * on applique la formule pour récupérer l'index et
+            * ainsi l'objet de façon à ce que cet objet soit
+            * pushé dans la stack*/
     }
-    console.log(positionPossible);
+    console.log(stack);
 
 }
 
