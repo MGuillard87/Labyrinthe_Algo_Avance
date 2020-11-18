@@ -87,6 +87,8 @@ function lookAroundYou(position) {
     * */
     let positionPossible = [];
     for(let i = 0; i<position.walls.length; i++) {
+        console.log("on est dans le for");
+        debugger
             if(!position.walls[i] && i === 0) {
                 positionPossible = positionPossible.push(position.posX - 1)
             }
