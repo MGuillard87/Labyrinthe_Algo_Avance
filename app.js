@@ -3,7 +3,7 @@ let arrayLab;
 /*===============CODE GENERANT LE LABYRINTHE AlEATOIREMENT si random à true SINON création en dure du labyrinthe=========================*/
 
 function randomOrNot() {
-    let random = false;
+    let random = true;
     let content = document.getElementById('grid-container');
     while (content.firstChild) {
         content.removeChild(content.firstChild);
