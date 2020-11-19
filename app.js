@@ -1,25 +1,29 @@
 let arrayLab;
 
-/*===============CODE GENERANT LE LABYRINTHE AlEATOIREMENT si random à true=========================*/
+/*===============CODE GENERANT LE LABYRINTHE AlEATOIREMENT si random à true SINON création en dure du labyrinthe=========================*/
 
 function randomOrNot() {
-    let random = true;
+    let random = false;
     let content = document.getElementById('grid-container');
     while (content.firstChild) {
         content.removeChild(content.firstChild);
     }
     if (random) {
+        // aléatoire permettant d'accéder à tous les labyrinthe
         let randomCase = Math.floor(Math.random() * Object.keys(labyrinthes).length + 3);
         let randomEx = Math.floor(Math.random() * 3);
         new_labyrinthe(randomCase, labyrinthes[randomCase]["ex-" + randomEx]);
     }else {
-        new_labyrinthe(5, labyrinthes["5"]["ex-0"]);
+        // Création du labyrinthe en ajoutant les arguments
+        new_labyrinthe(5, labyrinthes["5"]["ex-2"]);
     }
 }
 
 
-/*===============CODE GENERANT LE LABYRINTHE=========================*/
+/*===============CODE GENERANT LE LABYRINTHE PAR ALGO DE PARCOURS EN LARGEUR BFS=========================*/
+// BFS: utilisé pour explorer un graphe rapidement dans la largeur, couche par couche, niveau par niveau
 
+// fonction permettant de créer un labyrinthe
 function new_labyrinthe(taille, ex) {
     arrayLab = new Array(ex.length);
 
@@ -32,8 +36,9 @@ function new_labyrinthe(taille, ex) {
         arrayLab[i] = {};
         for (let j = 0; j < ex[i]["walls"].length; j++) {
 
+            // mise en couleur des murs s'ils existent
             if (ex[i]["walls"][j]) {
-                borderstyle = borderstyle + "solid ";
+                borderstyle = borderstyle + "double ";
             } else {
                 borderstyle = borderstyle + "none ";
             }
@@ -45,40 +50,53 @@ function new_labyrinthe(taille, ex) {
 
         let element = document.createElement("DIV");
         element.id = "cellule"+ ex[i]["posX"] +"_"+ ex[i]["posY"];
+        // condition permettant la mise en couleur de la dernière case du labyrinthe dans l'itération
         if (i === ex.length-1) {
-            element.style.backgroundColor = "tomato" }
-        element.style.borderStyle = borderstyle;
-        element.style.borderColor = "rgb(210,10,122)";
-        document.getElementById("grid-container").appendChild(element);
+            element.style.backgroundColor = "rgb(186,255,201)";
+            element.innerHTML = "A";
+            element.style.textAlign = "center";
+        }
+            element.style.borderStyle = borderstyle;
+            element.style.borderColor = "rgb(174,0,1)";
+            document.getElementById("grid-container").appendChild(element);
+        // condition permettant la mise en couleur de la première case du labyrinthe dans l'itération
+        if (0 === i){
+            element.style.backgroundColor = "rgb(255,179,186)";
+            element.innerHTML = "D";
+            element.style.textAlign = "center";
+        }
     }
-    console.log(arrayLab)
 }
+    console.log(arrayLab);
+
+
+
 function play() {
-    DFS(arrayLab, arrayLab[0]);
+    BFS(arrayLab, arrayLab[0]);
 }
 
 
 /*==============CODE SE DEPLACANT DANS LE LABYRINTHE=================*/
 
-function DFS(labyrinthe, caseDepart) {
+function BFS(labyrinthe, caseDepart) {
 
 //  On initialise une stack et un tableau vide: va être empilée et dépilée tout au long du processus
-   let stack = [];
+   let queue = [];
 /* On empile le point de départ dans la stack:
 Au début, le point de départ est le paramètre d’entrée.
 Puis, à chaque itération, ça va être le chemin au sommet de la stack -> le plus profond trouvé!
 */
-   stack.push(caseDepart);
+    queue.push(caseDepart);
    visited(caseDepart);
 
 // Tant que la stack n’est pas vide, on itère sur chacun des chemins de la même façon
-   while (stack.length > 0) {
+   while (queue.length > 0) {
 /* C’est dans ce while que l’algorithme de parcours en profondeur (DFS) va travailler.
   La fin de cette boucle signifie la résolution du problème.
 */
 
 // On dépile du sommet de la stack le chemin sur lequel on va travailler cette itération
-       let v = stack.pop()
+       let v = queue.shift()
        visited(v);
        if (lastCase(v)) {
            return;
@@ -88,7 +106,7 @@ Puis, à chaque itération, ça va être le chemin au sommet de la stack -> le p
        for (let w = 0; w<listesCasesVoisines.length;w++) {
            if (!listesCasesVoisines[w].isVisited) {
 
-               stack.push(listesCasesVoisines[w]);
+               queue.push(listesCasesVoisines[w]);
 
            }
        }
@@ -146,10 +164,6 @@ function lastCase(currentCase) {
    return arrayLab.indexOf(currentCase) === arrayLab.length -1
 
 }
-
-
-
-
 
 
 // Fonctions alternatives (à la fonction getCaseByCoordinate) à tester
