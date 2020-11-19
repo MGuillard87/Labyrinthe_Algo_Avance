@@ -80,28 +80,28 @@ function play() {
 
 function BFS(labyrinthe, caseDepart) {
 
-//  On initialise une stack et un tableau vide: va être empilée et dépilée tout au long du processus
+//  On initialise une queue et un tableau vide: va être empilée et dépilée tout au long du processus
    let queue = [];
-/* On empile le point de départ dans la stack:
+/* On empile le point de départ dans la queue:
 Au début, le point de départ est le paramètre d’entrée.
-Puis, à chaque itération, ça va être le chemin au sommet de la stack -> le plus profond trouvé!
+Puis, à chaque itération, ça va être la case du haut de la file = premier mis est le premier de la liste
 */
     queue.push(caseDepart);
    visited(caseDepart);
 
-// Tant que la stack n’est pas vide, on itère sur chacun des chemins de la même façon
+// Tant que la queue n’est pas vide, on itère sur chacun des cases de la même façon
    while (queue.length > 0) {
-/* C’est dans ce while que l’algorithme de parcours en profondeur (DFS) va travailler.
+/* C’est dans ce while que l’algorithme de parcours en largeur (BFS) va travailler.
   La fin de cette boucle signifie la résolution du problème.
 */
 
-// On dépile du sommet de la stack le chemin sur lequel on va travailler cette itération
+// On enlève de la queue la case sur laquelle on va travailler cette itération
        let v = queue.shift()
        visited(v);
        if (lastCase(v)) {
            return;
        }
-//  On va chercher toutes les cases adjacentes à la case courante. On va pousser seulement celles qui sont valides dans la stack
+//  On va chercher toutes les cases adjacentes à la case courante. On va pousser seulement celles qui sont valides dans la queue
        let listesCasesVoisines = allVoisin(v, arrayLab);
        for (let w = 0; w<listesCasesVoisines.length;w++) {
            if (!listesCasesVoisines[w].isVisited) {
