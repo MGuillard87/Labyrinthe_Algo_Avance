@@ -88,6 +88,7 @@ Puis, à chaque itération, ça va être la case du haut de la file = premier mi
 */
     queue.push(caseDepart);
    visited(caseDepart);
+    let delay = 0;
 
 // Tant que la queue n’est pas vide, on itère sur chacun des cases de la même façon
    while (queue.length > 0) {
@@ -97,7 +98,8 @@ Puis, à chaque itération, ça va être la case du haut de la file = premier mi
 
 // On enlève de la queue la case sur laquelle on va travailler cette itération
        let v = queue.shift()
-       visited(v);
+       delay = delay + 100;
+       visited(v, delay);
        if (lastCase(v)) {
            return;
        }
@@ -116,11 +118,18 @@ Puis, à chaque itération, ça va être la case du haut de la file = premier mi
 
 }
 
-function visited(s) {
+function visited(s, delay) {
 // fonction permettant d'indiquer si une case est en mode visitée ou non pour ne plus passer dessus dans l’avenir
 // Si la case est visitée, on met une couleur dessus
     s.isVisited = true;
     let idCase = "cellule" + s["posX"] + "_" + s["posY"];
+    obj = document.getElementById(idCase)
+    console.log(delay)
+    setTimeout(color, delay, idCase);
+
+}
+
+function color(idCase) {
     document.getElementById(idCase).style.backgroundColor = "rgb(62,234,207)";
 }
 
